@@ -59,7 +59,8 @@ Privacy policy: https://klaracase.de/privacy
 - Create a token at https://klaracase.de/settings/api-tokens. You need a login and a verified email. The token works on MCP and on REST. It is bound to the organization that is open when you create it.
 - A new verified account gets 30 free credits, valid for 30 days.
 - `corpus_coverage` and `list_facets` are free. `search_decisions`, `cross_type_search`, `get_decision` and `get_norm` cost 1 credit. `get_citation_graph` costs 2. `assemble_datapackage` costs 5. A citation check costs 2 credits up to 10,000 characters, 3 up to 15,000 and 4 at 20,000.
-- The same call again in the same billing period costs 0.
+- The same call again in the same credit period costs 0.
+- Credits renew per credit period: the UTC calendar month for free organizations, the paid billing period for subscribers. Unused credits do not roll over.
 
 ## Limits
 

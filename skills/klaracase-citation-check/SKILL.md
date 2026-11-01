@@ -49,7 +49,7 @@ New verified accounts get 30 free credits, valid for 30 days. Tool guide: https:
 - The text must show at least two of five legal-signal categories: a norm with § or Artikel, a German court, an Aktenzeichen-shaped docket, German legal-prose markers ("Abs.", "Urteil", "vgl."), or English legal markers. A lone statute sentence is refused with `not_german_legal_text`, however long it is. Send the surrounding sentences or the cited decision. Padding does not help.
 - `reference_date` is optional (`YYYY-MM-DD`). It dates statute citations whose own sentence names no date, and only affects the pre-reform-numbering advisory. It changes no verdict. Pass the document date when the user gives one.
 - Send the user's text unchanged. Offsets in the answer are Unicode codepoint offsets into that exact string.
-- The call is not read-only. Each check is saved in the user's Citation Check history in Klaracase, and the input text is deleted after 90 days (the findings are kept). It costs credits: at least 2, and more for longer text (2 up to 10,000 characters, 3 up to 15,000, 4 at 20,000). `credits.cost` is what the call took. Identical text again in the same billing period costs 0. If the user did not clearly ask for a check, say what it costs and that it is saved before you run it.
+- The call is not read-only. Each check is saved in the user's Citation Check history in Klaracase, and the input text is deleted after 90 days (the findings are kept). It costs credits: at least 2, and more for longer text (2 up to 10,000 characters, 3 up to 15,000, 4 at 20,000). `credits.cost` is what the call took. Identical text again in the same credit period costs 0. If the user did not clearly ask for a check, say what it costs and that it is saved before you run it.
 
 ## The seven verdicts
 
@@ -67,7 +67,7 @@ The exact wording to give the user for each verdict, the `evidence.reason` value
 
 ## Read the fields that qualify the verdicts
 
-- `partial` and `unverified_count` say the run left citations unchecked. Never present such a run as fully checked. Say how many citations are unverified. A re-check of that run in the web app costs nothing and covers exactly those citations. Calling the tool again re-checks the whole text. Identical text costs 0 in the same billing period. Changed text is priced again.
+- `partial` and `unverified_count` say the run left citations unchecked. Never present such a run as fully checked. Say how many citations are unverified. A re-check of that run in the web app costs nothing and covers exactly those citations. Calling the tool again re-checks the whole text. Identical text costs 0 in the same credit period. Changed text is priced again.
 - `check_scope` and `subdivision_check` say how far down the citation the check looked. `verified_corpus` on "§ 573 Abs. 2 Nr. 2 BGB" can mean only the § and the Absatz were checked. Relay `subdivision_advisory` (for example "Abs. 1 bestätigt; Nr. 2 nicht geprüft") instead of saying "fully verified".
 - `check_scope.court` says whether the court named in the prose was compared. `unchecked` means not checked. It changes no verdict.
 - `verdict_counts` and `unique_citations` count distinct citations. `findings` and `progress.citations_total` count occurrences. Say "citations", not "mentions".

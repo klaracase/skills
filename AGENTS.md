@@ -29,7 +29,8 @@ Read the matching SKILL.md before you call a Klaracase tool. Details are in each
 - `search_decisions`, `cross_type_search`, `get_decision`, `get_norm`: 1 credit each.
 - `get_citation_graph`: 2 credits. `assemble_datapackage`: 5 credits.
 - `check_citations`: 2 credits up to 10,000 characters, 3 up to 15,000, 4 at 20,000.
-- A repeat of the same call in the same billing period costs 0.
+- A repeat of the same call in the same credit period costs 0.
+- Credits renew per credit period: the UTC calendar month for free organizations, the paid billing period for subscribers. Unused credits do not roll over.
 - A new verified account gets 30 free credits, valid for 30 days.
 
 ## The one rule

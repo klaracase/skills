@@ -39,14 +39,14 @@ Five token abilities exist: `search`, `read`, `graph`, `datapackage`, `citation-
 | --- | --- | --- |
 | Decisions on a legal question | `search_decisions` | 1 per distinct query |
 | The statute and the case law together | `cross_type_search` | 1 per distinct query |
-| One decision, by Aktenzeichen, ECLI or `id` | `get_decision` | 1 per decision per calendar month |
-| One statute norm, by citation ("§ 535 BGB", "Art. 6 DSGVO") | `get_norm` | 1 per norm per calendar month |
+| One decision, by Aktenzeichen, ECLI or `id` | `get_decision` | 1 per decision per credit period |
+| One statute norm, by citation ("§ 535 BGB", "Art. 6 DSGVO") | `get_norm` | 1 per norm per credit period |
 | What a decision relies on, or who cites it | `get_citation_graph` | 2 per call |
 | Several known decisions as one grounded package | `assemble_datapackage` | 5 per call |
 | Whether the collection holds a court or period | `corpus_coverage` | free |
 | Valid values for a filter | `list_facets` | free |
 
-Arguments, caps, abilities and the REST twin of each tool are in `references/tools.md`. A repeat of the same call in the same billing period reports `cost: 0`. Read `credits.cost` in the answer for what a call took. Prefer the free tools first when a filter or a coverage question is open.
+Arguments, caps, abilities and the REST twin of each tool are in `references/tools.md`. A repeat of the same call in the same credit period reports `cost: 0`. Read `credits.cost` in the answer for what a call took. Prefer the free tools first when a filter or a coverage question is open.
 
 ## Work in this order
 

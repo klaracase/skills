@@ -25,7 +25,7 @@ curl -sS https://klaracase.de/api/v1/citation-checks \
 - `reference_date`: optional, `YYYY-MM-DD`. Drop it from the `jq` call when the user gave no date.
 - Instead of `text` you can send `document_id`, the id of an upload whose `status` is `ready` (never both). Upload with `POST /citation-check-documents` (multipart field `file`; PDF, DOCX, Markdown or text; up to 25 MB; free). The answer is 202. Poll `GET /citation-check-documents/{document}` until `status` is `ready`. The receipt names `char_count`, `check_max_chars` and `quoted_credits`. An upload that is not used expires after 48 hours.
 - The call is synchronous. The 200 answer is the finished run, with a terminal `status`. There is nothing to poll.
-- It needs the ability `citation-check`. It costs from 2 credits (2 up to 10,000 characters, 3 up to 15,000, 4 at 20,000). The same text again in the same billing period costs 0, on REST or MCP.
+- It needs the ability `citation-check`. It costs from 2 credits (2 up to 10,000 characters, 3 up to 15,000, 4 at 20,000). The same text again in the same credit period costs 0, on REST or MCP.
 - The call is corpus-only. It does not consult the external register.
 - The check is saved in the user's Citation Check history. The input text is deleted after 90 days. The findings are kept.
 
