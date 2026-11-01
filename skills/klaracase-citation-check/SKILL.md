@@ -53,11 +53,11 @@ New verified accounts get 30 free credits, valid for 30 days. Tool guide: https:
 
 ## The seven verdicts
 
-The verdict is always one of these seven words. Never invent an eighth. Only `discrepancy` says that something is wrong. `not_found` is absence of evidence, never fabrication. The other five run from confirmation to a limit of the tool.
+The verdict is always one of these seven words. Never invent an eighth. Only `discrepancy` says that something is wrong. `not_found` is absence of evidence, never proof that a citation is invented. The other five run from confirmation to a limit of the tool.
 
 - `verified_corpus`: the citation matches a real decision or a statute § in the corpus. It proves the decision exists, not that the quote or proposition holds. Read it with `get_decision` before relying on it.
 - `verified_external`: confirmed by the external register. The MCP tool and the REST call skip that stage, but this verdict can appear on a reused earlier run.
-- `not_found`: not in the corpus. Absence of evidence, never fabrication.
+- `not_found`: not in the corpus. Absence of evidence, never proof that a citation is invented.
 - `out_of_coverage`: outside the indexed range of that court, or outside the jurisdictions covered.
 - `ambiguous`: several corpus decisions match.
 - `unverifiable`: a tooling limit, not a statement about the citation.
@@ -82,7 +82,7 @@ The exact wording to give the user for each verdict, the `evidence.reason` value
 2. List each distinct citation once, in reading order, from `unique_citations`. Give the citation as the user wrote it, its verdict, and in one sentence what that verdict means here. Do not group on `raw_text`.
 3. For `verified_corpus` on a decision, give court, date and Aktenzeichen from `matched_decision`. Do not state more than the verdict says.
 4. For every `not_found`, `out_of_coverage`, `ambiguous`, `unverifiable` and `discrepancy`, give the reason and what the user can do next. For a missing decision, try `get_decision` with the exact Aktenzeichen or `search_decisions` for a near match. Say what each of those returned.
-5. Never call a citation fabricated, invented or non-existent beyond what its verdict says. `not_found` is not such a claim. Only `discrepancy` says that something is wrong, and only in the way its evidence states.
+5. Never call a citation invented, made up or non-existent beyond what its verdict says. `not_found` is not such a claim. Only `discrepancy` says that something is wrong, and only in the way its evidence states.
 6. Close with what the check did not cover: corpus only, no external register, Satz, Nr. and lit. below the § not checked, and whether the cited decisions support the propositions they are cited for.
 
 ## Cite only what a tool returned

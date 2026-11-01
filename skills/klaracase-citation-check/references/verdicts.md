@@ -6,7 +6,7 @@ The verdict is always one of these seven words. Never invent an eighth. Only `di
 | --- | --- |
 | `verified_corpus` | The citation matches a real decision or a statute § in the corpus. This is not a claim that the law is correct, still good law, or supports the point it is cited for. It proves the decision exists, not that the quote or proposition holds. Read it with `get_decision` before relying on it. |
 | `verified_external` | Confirmed by the external register. The MCP tool skips that stage, but this verdict can appear on a reused earlier run. |
-| `not_found` | Not in the corpus. This is never a claim that the citation is fabricated. The corpus can lag inside its coverage windows, and this tool does not consult the external register, so the evidence is weaker than in the web app. |
+| `not_found` | Not in the corpus. This never means the citation is invented. The corpus can lag inside its coverage windows, and this tool does not consult the external register, so the evidence is weaker than in the web app. |
 | `out_of_coverage` | The citation lies outside the indexed range of that court, or outside the jurisdictions covered. Say both halves: it is outside the range, and its existence is not confirmed. Quote `coverage_boundary.from` and the German `coverage_advisory`. |
 | `ambiguous` | Several corpus decisions match. The candidates are in `evidence`. Name them and ask which one the draft means. Relay the German `ambiguity_advisory`. |
 | `unverifiable` | A tooling limit, not a statement about the citation. Examples: a superseded instrument such as the BBauG, a cost-schedule number, or an Absatz that could not be checked. Relay the advisory. |
@@ -15,7 +15,7 @@ The verdict is always one of these seven words. Never invent an eighth. Only `di
 ## Rules
 
 - Only `discrepancy` says something is wrong.
-- `not_found` is absence of evidence, never fabrication.
+- `not_found` is absence of evidence, never proof that a citation is invented.
 - `verified_corpus` proves the decision exists, not that the quote or proposition holds. Read it with `get_decision` before relying on it.
 - The REST call (`POST /api/v1/citation-checks`) is corpus-only, like the MCP tool. It never consults the external register, so a `not_found` there is weaker evidence than in the web app.
 
