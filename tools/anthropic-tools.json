@@ -1,0 +1,425 @@
+[
+  {
+    "name": "assemble_datapackage",
+    "description": "Assemble a datapackage. Up to ten decisions with their outgoing citation edges in one structured payload, as grounded context for a language model: the REST twin of the MCP tool `assemble_datapackage`. Five credits per set of decisions and options per month.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "1-10 decision ids. Order matters: the response budget drops decisions from the END. Duplicates collapse into one decision; `requested`, `included` and `deduped` report that."
+        },
+        "include_citations": {
+          "type": "boolean",
+          "description": "Include each decision's outgoing citation edges (default true)."
+        },
+        "full_text": {
+          "type": "boolean",
+          "description": "Serve whole judgments instead of ~700-character excerpts (default false). Token-heavy; excerpts plus targeted get_decision calls are the lighter alternative."
+        },
+        "max_chars": {
+          "type": "integer",
+          "description": "Per-decision text cap when `full_text` is true (default 60000, minimum 500, maximum 200000). A ceiling, not a guarantee: the response budget outranks it."
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "check_citations",
+    "description": "Check the citations in a text. Verifies every court-decision and statute citation in a German legal text against the corpus and answers one verdict per citation, with offsets into your text: the REST twin of the MCP tool `check_citations`. Synchronous: the answer is the finished run. A text longer than the cap is refused before any charge, and the same text checked again this month costs nothing more.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "The German legal text to verify (min 50 characters, max 20000; longer documents are checked in the Citation Check of the web app). The length is a floor, not the gate: the text must also show at least two of five independent legal-signal categories, so a lone statute sentence is rejected however long it is. Response offsets are Unicode codepoint offsets into THIS exact string."
+        },
+        "reference_date": {
+          "type": "string",
+          "description": "OPTIONAL document date, ISO `YYYY-MM-DD`. It is applied to every statute citation whose own sentence names no date; a sentence that states its own date always wins. It gates the pre-reform-numbering advisory and changes no verdict. Each finding reports which date it used in `evidence.citation_date_source` (`sentence` | `reference_date` | `none`)."
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "corpus_coverage",
+    "description": "Corpus coverage. What the corpus holds: per Gerichtsbarkeit and per court, the number of decisions and the earliest and latest decision date, the REST twin of the MCP tool `corpus_coverage`. Free. The figures in the example are illustrative.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "branch": {
+          "type": "string",
+          "enum": [
+            "ordentlich",
+            "verwaltung",
+            "sozial",
+            "arbeit",
+            "finanz",
+            "verfassung",
+            "patent",
+            "unbekannt"
+          ],
+          "description": "Scope the report to one Gerichtsbarkeit slug. A branch is a COURT JURISDICTION, not a legal subject area: \"patent\" is the Bundespatentgericht. Omit to report every branch."
+        },
+        "top": {
+          "type": "integer",
+          "description": "Cap on the per-court rows, busiest first (default 20, max 100). The branch rollup is never capped."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "cross_type_search",
+    "description": "Search statutes and decisions. One search over German statutes and court decisions, answered in two sections, the REST twin of the MCP tool `cross_type_search`. One credit per distinct query and filter set per month.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query, German legal-concept phrasing, e.g. \"Widerrufsrecht Fernabsatzvertrag Wertersatz Verbraucher\". 2-500 characters; longer input is REJECTED, not truncated."
+        },
+        "jurisdiction": {
+          "type": "string",
+          "description": "Jurisdiction code. It narrows the LAWS section only — no decision carries the field — so it never empties `sections.decisions`; `filters_applied_sections.jurisdiction` says so. Values `DE`, `EU` (EU law and the Treaties), `XI` (international); counts via list_facets."
+        },
+        "court": {
+          "type": "string",
+          "description": "Court name filter on the decisions section, canonical German short form, e.g. \"BGH\"."
+        },
+        "branch": {
+          "type": "string",
+          "enum": [
+            "ordentlich",
+            "verwaltung",
+            "sozial",
+            "arbeit",
+            "finanz",
+            "verfassung",
+            "patent",
+            "unbekannt"
+          ],
+          "description": "Gerichtsbarkeit (court branch): it names the COURT JURISDICTION that decided the case, not the legal subject area. \"patent\" is the Bundespatentgericht, and BGH patent decisions sit under \"ordentlich\"."
+        },
+        "date_from": {
+          "type": "string",
+          "description": "Earliest decision date, inclusive, YYYY-MM-DD."
+        },
+        "date_to": {
+          "type": "string",
+          "description": "Latest decision date, inclusive, YYYY-MM-DD, NOT earlier than date_from."
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "keyword",
+            "semantic",
+            "hybrid"
+          ],
+          "description": "Retrieval mode. \"hybrid\" (default) blends semantic and keyword; \"keyword\" is not reranked; \"semantic\" is pure vector search."
+        },
+        "document_type": {
+          "type": "string",
+          "enum": [
+            "Urteil",
+            "Beschluss",
+            "Verfügung",
+            "Sonstige",
+            "Gerichtsbescheid",
+            "Schlussanträge"
+          ],
+          "description": "Restrict the decisions section to one document type."
+        },
+        "cited_norm": {
+          "type": "string",
+          "description": "Restrict the decisions section to decisions whose EXTRACTED Normenkette cites this statute, e.g. \"§ 906 BGB\". Canonicalized, and subdivisions nest."
+        },
+        "cited_statutes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "StGB",
+              "StPO",
+              "InsO",
+              "DSGVO",
+              "GDPR",
+              "BDSG",
+              "BauGB",
+              "BBauG",
+              "BauNVO",
+              "StVG",
+              "StVO"
+            ]
+          },
+          "description": "Any section of these statutes, e.g. [\"StGB\", \"StPO\"]."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum results PER section (default 5, hard-capped at 10 server-side)."
+        },
+        "bridge": {
+          "type": "boolean",
+          "description": "Whether the server may ADD terms before retrieval (default true). Covers every server-side addition to your query, `query_expansion` included. False searches your literal query; nothing is then added."
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "get_citation_graph",
+    "description": "Citation graph of a decision. The decisions one decision cites and the decisions citing it, paged, the REST twin of the MCP tool `get_citation_graph`. Two credits per decision, direction and depth per month; paging is free.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "A decision UUID, an Aktenzeichen such as `VIII ZR 271/17`, or an ECLI."
+        },
+        "direction": {
+          "type": "string",
+          "enum": [
+            "outgoing",
+            "incoming",
+            "both"
+          ],
+          "description": "\"outgoing\" = decisions this one cites (references), \"incoming\" = decisions citing this one (referenced_by), \"both\" (default) = both directions."
+        },
+        "depth": {
+          "type": "integer",
+          "enum": [
+            1,
+            2
+          ],
+          "description": "1 (default) = direct neighbours; 2 = neighbours of neighbours, capped at 50 distinct neighbour decisions besides the source and served as a bounded sample."
+        },
+        "court": {
+          "type": "string",
+          "description": "Optional disambiguator for an Aktenzeichen `id`: the canonical court short form, e.g. \"BVerfG\" or \"OLG Hamm\". Ignored for UUID lookups."
+        },
+        "date": {
+          "type": "string",
+          "description": "Optional disambiguator for an Aktenzeichen `id`: the decision date in YYYY-MM-DD."
+        },
+        "page": {
+          "type": "integer",
+          "description": "1-based page (default 1) over the SOURCE decision's neighbour lists, 25 distinct decisions per direction, up to page 20. Defined at depth 1 only."
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "get_decision",
+    "description": "Read a decision. One decision's full text, or a named section or a Randnummer window of it, with its metadata: the REST twin of the MCP tool `get_decision`. One credit per decision per month; reading it again, in any slice, costs nothing more.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "A decision UUID, an Aktenzeichen such as `VIII ZR 271/17` (the slash may be sent as is or as %2F), or an ECLI."
+        },
+        "max_chars": {
+          "type": "integer",
+          "description": "Maximum characters of text to return (default 40000, minimum 500)."
+        },
+        "rn_from": {
+          "type": "integer",
+          "description": "Optional range start: the first Randnummer to return. Whole chunks come back, so the served span is reported in `returned_range`."
+        },
+        "rn_to": {
+          "type": "integer",
+          "description": "Optional range end: the highest Randnummer to return (inclusive). Must be >= rn_from."
+        },
+        "section": {
+          "type": "string",
+          "description": "Optional named section instead of the whole text. One of: Tenor, Leitsatz, Tatbestand, Gründe (case-insensitive). `available_sections` lists the sections a decision has."
+        },
+        "court": {
+          "type": "string",
+          "description": "Optional disambiguator for an Aktenzeichen `id`: the court short form, e.g. \"BGH\". Matched as a whole-word prefix. Ignored for UUID lookups."
+        },
+        "date": {
+          "type": "string",
+          "description": "Optional disambiguator for an Aktenzeichen `id`: the decision date in YYYY-MM-DD."
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "get_norm",
+    "description": "Read a norm. The full current text of one German federal or EU norm by its citation, with the version it was served from, its neighbours and the decisions that cite it: the REST twin of the MCP tool `get_norm`. One credit per norm per month; reading it again costs nothing more.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "reference": {
+          "type": "string",
+          "description": "One statute citation, URL-encoded, such as `§ 535 BGB`, `§ 626 Abs. 2 BGB` or `Art. 6 DSGVO`."
+        },
+        "jurisdiction": {
+          "type": "string",
+          "description": "DE or EU; only read when the abbreviation is ambiguous."
+        }
+      },
+      "required": [
+        "reference"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "list_facets",
+    "description": "Filter values of a field. The values the index holds for a filterable field, with counts, so a search filter uses values that exist: the REST twin of the MCP tool `list_facets`. Free. The figures in the example are illustrative.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "field": {
+          "type": "string",
+          "description": "The field: `court_name`, `court_branch`, `document_type`, `jurisdiction`, `law_type` or `cited_norms`."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "decision",
+            "law"
+          ],
+          "description": "Restrict the counts to one artifact type. Omit to count across both. Ignored for field=\"cited_norms\"."
+        },
+        "norm": {
+          "type": "string",
+          "description": "Required with field=\"cited_norms\", ignored otherwise: the norm whose family to list, e.g. \"§ 543 BGB\". Canonicalized before use and echoed back."
+        },
+        "prefix": {
+          "type": "string",
+          "description": "Case-insensitive prefix filter on the facet value. A trailing space counts: prefix=\"AG \" excludes \"AGH Niedersachsen\", prefix=\"AG\" keeps it."
+        }
+      },
+      "required": [
+        "field"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "search_decisions",
+    "description": "Search decisions. Hybrid search over the German court decisions in the corpus, the REST twin of the MCP tool `search_decisions`. Phrase the query as German legal concepts. One credit per distinct query and filter set per month: paging, and the same search again this month, on REST or MCP, cost nothing more.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query in German legal-concept phrasing, e.g. \"Widerrufsrecht Fernabsatzvertrag Wertersatz Verbraucher\". 2-500 characters; longer input is REJECTED."
+        },
+        "court": {
+          "type": "string",
+          "description": "Court filter on the indexed court name. That vocabulary is MIXED and chamber-level, so the value is the court, not the chamber (values: list_facets(field=\"court_name\"))."
+        },
+        "branch": {
+          "type": "string",
+          "enum": [
+            "ordentlich",
+            "verwaltung",
+            "sozial",
+            "arbeit",
+            "finanz",
+            "verfassung",
+            "patent",
+            "unbekannt"
+          ],
+          "description": "Gerichtsbarkeit (court branch) filter. It names the COURT JURISDICTION that decided the case, not the legal subject area. \"patent\" is the Bundespatentgericht alone: BGH patent decisions sit under \"ordentlich\"."
+        },
+        "document_type": {
+          "type": "string",
+          "enum": [
+            "Urteil",
+            "Beschluss",
+            "Verfügung",
+            "Sonstige",
+            "Gerichtsbescheid",
+            "Schlussanträge"
+          ],
+          "description": "Restrict to one decision document type; list_facets gives the counts."
+        },
+        "cited_norm": {
+          "type": "string",
+          "description": "Restrict to decisions whose extracted Normenkette cites this statute, e.g. \"§ 906 BGB\". One canonical §-token; subdivisions nest (\"§ 823 BGB\" matches \"§ 823 Abs. 1 BGB\")."
+        },
+        "cited_statutes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "StGB",
+              "StPO",
+              "InsO",
+              "DSGVO",
+              "GDPR",
+              "BDSG",
+              "BauGB",
+              "BBauG",
+              "BauNVO",
+              "StVG",
+              "StVO"
+            ]
+          },
+          "description": "Any section of these statutes, e.g. [\"StGB\", \"StPO\"]."
+        },
+        "date_from": {
+          "type": "string",
+          "description": "Earliest decision date, inclusive, formatted YYYY-MM-DD (e.g. \"2015-01-01\"). ACCURACY CAVEAT: a scanned decision can carry a WRONG stored date; see `date_source`/`date_confidence`."
+        },
+        "date_to": {
+          "type": "string",
+          "description": "Latest decision date, inclusive, formatted YYYY-MM-DD (e.g. \"2020-12-31\"), not earlier than date_from. ACCURACY CAVEAT: a scanned decision can carry a WRONG stored date; see `date_source`/`date_confidence`."
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "keyword",
+            "semantic",
+            "hybrid"
+          ],
+          "description": "Retrieval mode. \"hybrid\" (default) blends semantic and keyword. \"keyword\" requires ALL query terms at once and is not reranked; a query that is a citation throughout (\"§ 550a BGB\", \"VIII ZR 311/02\") is matched EXACTLY, with no typo tolerance, so a similar number cannot answer it. \"semantic\" is pure vector search. Unset does not guarantee hybrid: a precise identifier is auto-classified to keyword."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum results. Default 20, which is also the hard cap, so this can only narrow the window."
+        },
+        "page": {
+          "type": "integer",
+          "description": "1-based page number, default 1, maximum 10, for results past the first page when `candidate_pool` exceeds `limit`."
+        },
+        "bridge": {
+          "type": "boolean",
+          "description": "Whether the server may ADD curated German legal-register terms before retrieval (default true); the outcome is in `query_expansion`."
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false
+    }
+  }
+]
