@@ -27,7 +27,7 @@ Prices are in credits. One charge applies per operation, organization, subject a
 
 - Rate limit: 60 requests per minute per token. Above that, the server returns JSON-RPC error -32000 (HTTP 429) with `data.retry_after_seconds`. Nothing ran.
 - Daily volume caps (rows or documents, Europe/Berlin day): free 1,000 and 40, Starter 5,000 and 200, Professional 20,000 and 600, Enterprise 60,000 and 2,000. A reached cap is refused with `volume_cap`.
-- Free accounts get 30 credits once, valid for 30 days. Starter has 300 credits a month (29 EUR gross), Professional 1,000 (79 EUR), Enterprise 5,000 (quoted). Credits do not roll over.
+- Free accounts get 30 credits once, valid for 30 days. Starter has 300 credits a month, Professional 1,000, Enterprise 5,000. Credits do not roll over. Plan prices are on https://klaracase.de/preise (German) and https://klaracase.de/en/preise (English).
 
 ## Area addresses
 
