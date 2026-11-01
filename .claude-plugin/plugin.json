@@ -1,0 +1,20 @@
+{
+  "name": "klaracase",
+  "version": "1.0.0",
+  "description": "Check the citations in a German legal text and research German case law and statutes with Klaracase. Two skills and a remote MCP connection (https://klaracase.de/mcp).",
+  "author": {
+    "name": "SPARQ VENTURES UG (haftungsbeschränkt)",
+    "url": "https://klaracase.de"
+  },
+  "homepage": "https://klaracase.de",
+  "license": "MIT",
+  "keywords": [
+    "german-law",
+    "legal-research",
+    "citation-check",
+    "case-law",
+    "rechtsprechung",
+    "mcp"
+  ],
+  "privacyPolicyUrl": "https://klaracase.de/privacy"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "klaracase",
+  "owner": {
+    "name": "SPARQ VENTURES UG (haftungsbeschränkt)",
+    "url": "https://klaracase.de"
+  },
+  "metadata": {
+    "description": "Skills and an MCP connection for Klaracase: citation check and research for German case law and statutes."
+  },
+  "plugins": [
+    {
+      "name": "klaracase",
+      "source": "./",
+      "description": "Citation check and research for German case law and statutes. Two skills and a remote MCP connection to Klaracase."
+    }
+  ]
+}
