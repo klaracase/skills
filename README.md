@@ -19,12 +19,10 @@ Each skill has two ways to reach Klaracase. The MCP server is the main way. The 
 
 ## Install
 
-Replace `<org>` with the Klaracase GitHub organization.
-
 ### Claude Code
 
 ```bash
-claude plugin marketplace add <org>/skills
+claude plugin marketplace add klaracase/skills
 claude plugin install klaracase@klaracase
 ```
 
@@ -33,7 +31,7 @@ The plugin adds both skills and the MCP connection. Run `/mcp` in Claude Code to
 ### Codex, Cursor, Copilot, Gemini CLI, OpenCode
 
 ```bash
-npx skills add <org>/skills
+npx skills add klaracase/skills
 ```
 
 This writes the skills to `.agents/skills/`. These agents read that folder. The `skills` command sends anonymous usage data. Set `DO_NOT_TRACK=1` to stop that.

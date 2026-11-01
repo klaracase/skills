@@ -44,4 +44,4 @@ Klaracase is a research tool. It gives no legal advice and does not replace a la
 ## Official SDKs
 
 REST clients for Node, Python, PHP, Go and Rust live in the Klaracase GitHub organization
-(`<org>`, to be named by the owner). Agents that need tools should use the MCP server.
+(`klaracase`, <https://github.com/klaracase>). Agents that need tools should use the MCP server.
